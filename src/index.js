@@ -1,15 +1,14 @@
 
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './components/App/App.js';
-import registerServiceWorker from './registerServiceWorker';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 // Provider allows us to use redux within our react app
 import { Provider } from 'react-redux';
 import logger from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
 import { takeEvery, put } from 'redux-saga/effects';
+import axios from 'axios';
 
 //ROOT saga here
 function* rootSaga() {
@@ -17,9 +16,10 @@ function* rootSaga() {
   }
 
   //GET saga here
-function* getGifsSaga() {
+function* getGifsSaga(action) {
     try {
-        const receivedGifs = yield axios.get(`/api/search/${this.state.keyword}`);
+        const receivedGifs = yield axios.get(`/api/search/${action.payload}`);
+        console.log( receivedGifs);
         yield put({type: 'GET_GIFS', payload: receivedGifs.data});
     } catch (error) {
         console.log('error fetching gifs', error);
@@ -43,10 +43,10 @@ const storeInstance = createStore(
     combineReducers({
         fetchNewGifs
     }),
-    applyMiddleware(logger),
+    applyMiddleware(logger, sagaMiddleware),
 );
 
 sagaMiddleware.run(rootSaga);
 
 ReactDOM.render(<Provider store={storeInstance}><App /></Provider>, 
-    document.getElementById('root'));
+    document.getElementById('react-root'));
