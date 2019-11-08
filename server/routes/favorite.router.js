@@ -10,7 +10,16 @@ router.get('/', (req, res) => {
 
 // add a new favorite 
 router.post('/', (req, res) => {
-  res.sendStatus(200);
+  console.log(req.body.url);
+  
+  const queryText = `INSERT INTO favorites ("url", "category-id") VALUES ($1, $2)`
+  pool.query(queryText, [req.body.url, 1])
+    .then( (result) => {
+      res.sendStatus(200);
+    })
+    .catch( (error) => {
+      res.sendStatus(501);
+    })
 });
 
 // update given favorite with a category id

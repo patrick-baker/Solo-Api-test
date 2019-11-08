@@ -13,26 +13,38 @@ import axios from 'axios';
 //ROOT saga here
 function* rootSaga() {
     yield takeEvery('FETCH_GIFS', getGifsSaga);
-  }
+    yield takeEvery('FAVORITE_GIF', favoriteSaga);
+}
 
-  //GET saga here
+//GET saga here
 function* getGifsSaga(action) {
     try {
         const receivedGifs = yield axios.get(`/api/search/${action.payload}`);
-        console.log( receivedGifs);
-        yield put({type: 'GET_GIFS', payload: receivedGifs.data});
+        console.log(receivedGifs);
+        yield put({ type: 'GET_GIFS', payload: receivedGifs.data.data });
     } catch (error) {
         console.log('error fetching gifs', error);
     }
-  }
+}
+
+//POST saga
+function* favoriteSaga(action) {
+    try {
+        yield axios.post('/api/favorite', action.payload)
+        yield put({ type: 'GET_GIFS' })
+    }
+    catch (error) {
+        console.log('error posting gif', error);
+    }
+}
 
 // Create saga middleware
 const sagaMiddleware = createSagaMiddleware();
 
 // Reducer that holds our results
 
-const fetchNewGifs = (state = {}, action) => {
-    if(action.type === 'GET_GIFS') {
+const fetchNewGifs = (state = [], action) => {
+    if (action.type === 'GET_GIFS') {
         return action.payload;
     }
     return state;
@@ -48,5 +60,5 @@ const storeInstance = createStore(
 
 sagaMiddleware.run(rootSaga);
 
-ReactDOM.render(<Provider store={storeInstance}><App /></Provider>, 
+ReactDOM.render(<Provider store={storeInstance}><App /></Provider>,
     document.getElementById('react-root'));
