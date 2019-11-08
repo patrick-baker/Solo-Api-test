@@ -4,6 +4,10 @@ import ShowResults from '../ShowResults/ShowResults'
 
 class Search extends Component {
 
+componentDidMount() {
+    this.props.dispatch({ type: 'GET_CATEGORIES'});
+}
+
     state = {
         keyword: '',
     }

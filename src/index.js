@@ -15,6 +15,7 @@ function* rootSaga() {
     yield takeEvery('FETCH_GIFS', getGifsSaga);
     yield takeEvery('FAVORITE_GIF', favoriteSaga);
     yield takeEvery('GET_FAVORITES', getFavorites);
+    yield takeEvery('GET_CATEGORIES', getCategorySaga);
 }
 
 //GET saga here
@@ -27,6 +28,16 @@ function* getGifsSaga(action) {
         console.log('error fetching gifs', error);
     }
 }
+
+function* getCategorySaga(action) {
+    try {
+        const receivedCategories = yield axios.get(`/api/category/`);
+        yield put({ type: 'SET_CATEGORIES', payload: receivedCategories.data });
+    } catch (error) {
+        console.log('error fetching categories', error);
+    }
+}
+
 
 //POST saga
 function* favoriteSaga(action) {
@@ -70,11 +81,19 @@ const fetchFavoriteGifs = (state = [], action) => {
     return state;
 }
 
+const fetchCategories = (state = [], action) => {
+    if (action.type === 'SET_CATEGORIES') {
+        return action.payload;
+    }
+    return state;
+}
+
 // Create one store that all components can use
 const storeInstance = createStore(
     combineReducers({
         fetchNewGifs,
-        fetchFavoriteGifs
+        fetchFavoriteGifs,
+        fetchCategories,
     }),
     applyMiddleware(logger, sagaMiddleware),
 );
