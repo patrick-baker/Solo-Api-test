@@ -15,7 +15,7 @@ class Search extends Component {
     }
 
     handleClick = () =>
-    this.props.dispatch({type: '', payload: this.state.keyword});
+    this.props.dispatch({type: 'FETCH_GIFS', payload: this.state.keyword});
 
     render() {
         return (
