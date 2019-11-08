@@ -14,6 +14,7 @@ import axios from 'axios';
 function* rootSaga() {
     yield takeEvery('FETCH_GIFS', getGifsSaga);
     yield takeEvery('FAVORITE_GIF', favoriteSaga);
+    yield takeEvery('GET_FAVORITES', getFavorites);
 }
 
 //GET saga here
@@ -38,6 +39,18 @@ function* favoriteSaga(action) {
     }
 }
 
+//GET favorites saga
+function* getFavorites(action) {
+    try {
+        const favoriteGifs = yield axios.get('/api/favorite')
+        console.log(favoriteGifs);
+        yield put({ type: 'FAVORITES_REDUCER', payload: favoriteGifs.data})
+    }
+    catch (error) {
+        console.log('error posting gif', error);
+    }
+}
+
 // Create saga middleware
 const sagaMiddleware = createSagaMiddleware();
 
@@ -50,10 +63,18 @@ const fetchNewGifs = (state = [], action) => {
     return state;
 }
 
+const fetchFavoriteGifs = (state = [], action) => {
+    if (action.type === 'FAVORITES_REDUCER') {
+        return action.payload;
+    }
+    return state;
+}
+
 // Create one store that all components can use
 const storeInstance = createStore(
     combineReducers({
-        fetchNewGifs
+        fetchNewGifs,
+        fetchFavoriteGifs
     }),
     applyMiddleware(logger, sagaMiddleware),
 );
