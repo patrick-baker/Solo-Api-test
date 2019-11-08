@@ -13,7 +13,7 @@ class ShowResults extends Component {
       <div>
           {this.props.reduxState.APIReducer.map( (gif) => 
             <img src={gif.url}/>
-            <button onClick={() => this.favoriteImage(gif.url)}>Favorite</button>
+            <button onClick={() => this.favoriteImage(gif.url)}>Favorite</button>}
           )}
       </div>
     );
