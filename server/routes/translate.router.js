@@ -6,23 +6,22 @@ const axios = require('axios');
 
 const router = express.Router();
 
-router.get('/:search', (req, res) => {
-    console.log(req.params);
-    // query giphy API
+router.get('/:lang/:text', (req, res) => {
+    // fetch Translate API
     axios({
         method: 'GET',
-        url: 'https://api.giphy.com/v1/gifs/search',
+        url: 'https://translate.yandex.net/api/v1.5/tr.json/translate',
         params: {
-            api_key: process.env.GIPHY_API_KEY,
-            q: req.params.search,
-            limit: 10,
+            key: process.env.YANDEX_API_KEY,
+            text: req.params.text,
+            lang: req.params.lang,
         }
     }).then( (result) => {
-        res.send(result.data);
         console.log(result.data);
+        res.send(result.data);
     })
     .catch(error => {
-        console.log('error in api GETTER', error);
+        console.log('error in api/translate GETTER', error);
     })
 });
 
